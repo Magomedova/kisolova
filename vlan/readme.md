@@ -122,3 +122,117 @@ S1#copy running-config startup-config
 
 ```
 
+* Настройка хостов ПК.
+
+1. ПК-А
+
+![ПК_А](https://user-images.githubusercontent.com/5254857/112508228-6e50b980-8da0-11eb-8be1-50b1dbece29c.png)
+
+2. ПК-В
+
+![ПК_В](https://user-images.githubusercontent.com/5254857/112508282-76105e00-8da0-11eb-880e-7b4db0656740.png)
+
+#### Создание сетей VLAN и назначение портов коммутатора
+
+* Создание Vlan
+```
+S1(config)#vlan 3
+S1(config-vlan)#name Management
+S1(config-vlan)#vlan 4
+S1(config-vlan)#name Operations
+S1(config-vlan)#vlan 7
+S1(config-vlan)#name ParkingLot
+S1(config-vlan)#vlan 8
+S1(config-vlan)#name Native
+```
+* Назначение VLAN интерфейсам коммутатора.
+```
+S2(config)#interface fa0/18
+S2(config-if)#switchport mode access
+S2(config-if)#switchport access vlan 4
+```
+* Назначение vlan ParkingLot  на все не используемые порты, с последующим отключением
+```
+S1(config)#interface range fa0/2 - 4 , fa0/7 - 24, gi0/1 - 2
+S1(config-if-range)#switchport mode access 
+S1(config-if-range)#switchport access vlan 7
+S1(config-if-range)#shutdown
+```
+* Обозначение интерфейса управления с маской
+```
+S1(config)#interface vlan 3
+S1(config-if)#ip address 192.168.3.11 255.255.255.0
+S1(config-if)#no shutdown 
+```
+* Вывод команды show vlan brief:
+
+S1>sh vlan
+```
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    
+3    Management                       active    Fa0/6
+4    Operation                        active    
+7    ParkingLot                       active    Fa0/2, Fa0/3, Fa0/4, Fa0/7
+                                                Fa0/8, Fa0/9, Fa0/10, Fa0/11
+                                                Fa0/12, Fa0/13, Fa0/14, Fa0/15
+                                                Fa0/16, Fa0/17, Fa0/18, Fa0/19
+                                                Fa0/20, Fa0/21, Fa0/22, Fa0/23
+                                                Fa0/24, Gig0/1, Gig0/2
+```
+####  Настройка магистрали 802.1Q на коммутаторах
+* Настройка транковых портов
+```
+S1(config)#interface fa0/1
+S1(config-if)#switchport mode trunk
+```
+* Установка нативного влана и разрешение прохождения vlan 3,4,8 
+```
+S1(config-if)#switchport trunk native vlan 8
+S1(config-if)#switchport trunk allowed vlan 3,4,8
+```
+* Вывод команды show interfaces trunk
+```
+Port        Mode         Encapsulation  Status        Native vlan
+Fa0/1       on           802.1q         trunking      8
+Fa0/5       on           802.1q         trunking      8
+
+Port        Vlans allowed on trunk
+Fa0/1       3-4,8
+Fa0/5       3-4,8
+
+Port        Vlans allowed and active in management domain
+Fa0/1       3,4
+Fa0/5       3,4
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/1       3,4
+Fa0/5       3,4
+```
+
+####  Настройка маршрутизатора
+* Настройка магистрального GigabitEthernet 0/0/1 и сабынтерфейсов 
+```
+R1(config)#interface gigabitEthernet 0/0/1
+R1(config-if)#no shut
+R1(config)#interface gi0/0/1.3
+R1(config-subif)#description Management
+R1(config-subif)#encapsulation dot1Q 3
+R1(config-subif)#ip address 192.168.3.1 255.255.255.0
+R1(config-subif)#interface gi0/0/1.4
+R1(config-subif)#description Operations
+R1(config-subif)#encapsulation dot1Q 4
+R1(config-subif)#ip address 192.168.4.1 255.255.255.0
+R1(config-subif)#interface gi0/0/1.8
+R1(config-subif)#description Native
+R1(config-subif)#encapsulation dot1Q 8 Native
+```
+* Вывод команды show ip interface brief:
+```
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0/0   unassigned      YES unset  administratively down down 
+GigabitEthernet0/0/1   unassigned      YES unset  up                    up 
+GigabitEthernet0/0/1.3 192.168.3.1     YES manual up                    up 
+GigabitEthernet0/0/1.4 192.168.4.1     YES manual up                    up 
+GigabitEthernet0/0/1.8 unassigned      YES unset  up                    up 
+Vlan1                  unassigned      YES unset  administratively down down
