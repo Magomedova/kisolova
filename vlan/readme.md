@@ -10,6 +10,9 @@
 
 ### Топология
 
+![топология](https://user-images.githubusercontent.com/5254857/112503036-a73a5f80-8d9b-11eb-8462-6a0ab1ba5ec5.png)
+
+
 
 
 ### Таблица адресации
@@ -38,6 +41,38 @@
 ##  Решение:
 #### Организовать сеть и провести базовую настройку устройств
 
+* Подключение сети согласно топологии.
+
+![схема](https://user-images.githubusercontent.com/5254857/112504594-fe8cff80-8d9c-11eb-9c66-de41979bb0c7.png)
+
+* Настройка основных параметров маршрутизатора.
+
+S1:
+
+```
+Router>en
+Router#conf t
+Router(config)#hostname R1
+R1(config)#no ip domain-lookup 
+R1(config)#enable secret class
+R1(config)#line console 0
+R1(config-line)#password cisco
+R1(config-line)#login
+R1(config-line)#exit
+R1(config)#line vty 0 4
+R1(config-line)#password cisco
+R1(config-line)#login
+R1(config-line)#exit
+R1(config)#service password-encryption 
+R1(config)#banner motd 'Authorized Accessonly'
+R1(config)#end
+R1#clock set 19:14:00 5 March 2021
+R1#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+
+```
 
 
 <details>
