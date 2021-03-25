@@ -94,7 +94,7 @@ S1(config-line)#login
 S1(config-line)#exit
 S1(config)#service password-encryption 
 S1(config)#banner motd 'Authorized Accessonly'
-S1#clock set 19:14:00 5 March 2021
+S1#clock set 19:14:00 24 March 2021
 S1#copy running-config startup-config 
 
 ```
@@ -117,7 +117,7 @@ S1(config-line)#login
 S1(config-line)#exit
 S1(config)#service password-encryption 
 S1(config)#banner motd 'Authorized Accessonly'
-S1#clock set 19:14:00 5 March 2021
+S1#clock set 19:14:00 24 March 2021
 S1#copy running-config startup-config 
 
 ```
