@@ -47,7 +47,7 @@
 
 * Настройка основных параметров маршрутизатора.
 
-S1:
+R1:
 
 ```
 Router>en
@@ -74,18 +74,51 @@ Building configuration...
 
 ```
 
+* Настройка основных параметров для каждого коммутатора.
 
-<details>
-<summary> Задание. </summary>
-  
-  
-1. Организовать сеть и провести базовую настройку устройств
-2. Создать ВЛАНы и назначить на порту коммутаторов
-3. Настроить 802.1Q транк между коммутаторами
-4. Настроить маршрутизацию между ВЛАН на маршрутизаторе
-5. Убедиться что все работает
+1. S1
+```
 
+Switch#enable
+Switch#configure terminal 
+Switch(config)#hostname S1
+S1(config)#no ip domain-lookup 
+S1(config)#enable secret class
+S1(config)#line console 0
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#line vty 0 15
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#service password-encryption 
+S1(config)#banner motd 'Authorized Accessonly'
+S1#clock set 19:14:00 5 March 2021
+S1#copy running-config startup-config 
 
-</details>
+```
 
+1. S2
+```
+
+Switch#enable
+Switch#configure terminal 
+Switch(config)#hostname S2
+S1(config)#no ip domain-lookup 
+S1(config)#enable secret class
+S1(config)#line console 0
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#line vty 0 15
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#service password-encryption 
+S1(config)#banner motd 'Authorized Accessonly'
+S1#clock set 19:14:00 5 March 2021
+S1#copy running-config startup-config 
+
+```
 
