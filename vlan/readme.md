@@ -241,10 +241,16 @@ Vlan1                  unassigned      YES unset  administratively down down
 ### Проверка
 * Эхо-запрос с компьютера PC-A на его шлюз по умолчанию.
 ![pingatogate](https://user-images.githubusercontent.com/5254857/112514353-46645480-8da6-11eb-80cc-807180136b7f.png)
+
 * Пинг с ПК-А на ПК-Б
+
 ![A-B](https://user-images.githubusercontent.com/5254857/112515709-91329c00-8da7-11eb-8988-5f583d406706.png)
+
 * Пинг с ПК-А на S2
+
 ![A-S2](https://user-images.githubusercontent.com/5254857/112516240-1fa71d80-8da8-11eb-9a9d-d35c90e68a0e.png)
+
 * tracert ПК-B
+
 ![tracert](https://user-images.githubusercontent.com/5254857/112516552-73196b80-8da8-11eb-88ba-5a8b6a0f660e.png)
 
