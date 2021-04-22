@@ -74,7 +74,7 @@ S1(config-if-range)#no shut
 S1(config-if-range)#no shutdown 
 ```
 4. Отобразите данные протокола spanning-tree.
-*S1
+
 ```
 S1#sh spanning-tree 
 VLAN0001
