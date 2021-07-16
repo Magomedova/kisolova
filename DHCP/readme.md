@@ -41,6 +41,7 @@
 
 
 ##  Решение:
+## Часть 1.
 
 ### В сети 192.168.1.0/24 на 3 подсети:
 
@@ -192,4 +193,91 @@ S2(config-if)#ip add
 S2(config-if)#ip address 192.168.1.98 255.255.255.240
 S2(config-if)#no shut
 S2(config-if)#ex
+```
+Выключение неипользуемых портов на S1 и S2:
+```
+S1(config)#int range fa0/1-4
+S1(config-if-range)#sw mode access 
+S1(config-if-range)#sw access vlan 999
+S1(config-if-range)#shut
+S1(config-if-range)#ex
+S1(config)#int range fa0/7-24
+S1(config-if-range)#sw m ac
+S1(config-if-range)#sw  ac vlan 999
+S1(config-if-range)#shut
+S1(config-if-range)#ex
+S1(config)#int rang gi0/1-2
+S1(config-if-range)#sw m ac
+S1(config-if-range)#sw ac vlan 999
+S1(config-if-range)#shut
+S1(config-if-range)#ex
+```
+S2:
+```
+S2(config)#int rang fa0/1-4
+S2(config-if-range)#shut
+S2(config-if-range)#int ra fa0/6-17
+S2(config-if-range)#shut	
+S2(config-if-range)#ex	
+S2(config)#int ra fa0/19-24
+S2(config-if-range)#shut
+S2(config-if-range)#ex
+S2(config-if)#int ra gi0/1-2
+S2(config-if-range)#shut
+S2(config-if-range)#ex
+```
+Вопрос: Why is interface F0/5 listed under VLAN 1?
+Ответ:Потому что VLAN 1 по умолчанию нативный, весь нетегированный трафик проходит в нативном влане, не настроен интерфейс fa0/5.
+
+### Назначение VLAN интерфейсам на S1:
+```
+S1(config)#int fa0/5
+S1(config-if)#sw m tr
+S1(config-if)#sw tr native Vlan 1000
+S1(config-if)#sw tr allowed vlan 100,200,1000 
+```
+## Часть 2. Настройка и проверка 2-х DHCPv4 серверов на R1.
+### Настройка:
+```
+R1(config)#ip dhcp excluded-address 192.168.1.1 192.168.1.62
+R1(config)#ip dhcp pool dhcp1
+R1(dhcp-config)#network 192.168.1.0 255.255.255.192
+R1(dhcp-config)#domain-name ccna-lab.com
+R1(dhcp-config)#default-router 192.168.1.1
+R1(dhcp-config)#end
+
+R1(config)#ip dhcp excluded-address 192.168.1.97 192.168.1.111
+R1(config)#ip dhcp pool dhcp_2
+R1(dhcp-config)#network 192.168.1.96 255.255.255.240
+R1(dhcp-config)#default-router 192.168.1.97
+R1(dhcp-config)#domain-name ccna-lab.com
+R1(dhcp-config)#end
+```
+### Проверка:
+R1#show ip dhcp pool 
+```
+Pool dhcp1 :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 0
+ Excluded addresses             : 2
+ Pending event                  : none
+
+ 1 subnet is currently in the pool
+ Current index        IP address range                    Leased/Excluded/Total
+ 192.168.1.1          192.168.1.1      - 192.168.1.62      0    / 2     / 62
+
+Pool dhcp2 :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 14
+ Leased addresses               : 0
+ Excluded addresses             : 2
+ Pending event                  : none
+
+ 1 subnet is currently in the pool
+ Current index        IP address range                    Leased/Excluded/Total
+ 192.168.1.97         192.168.1.97     - 192.168.1.110     0    / 2     / 14
+```
 ```
