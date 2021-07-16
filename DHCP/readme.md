@@ -156,3 +156,40 @@ Sending 5, 100-byte ICMP Echos to 192.168.1.97, timeout is 2 seconds:
 !!!!!
 Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
 ```
+### Настройка базовой конфигурации на S1 и S2. 
+
+S1 (S2 аналогично):
+```
+Switch(config)#hostname S1
+S1(config)#no ip domain lookup
+S1(config)#enable secret class
+S1(config)#line console 0
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#line vty 0 4
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#service password-encryption
+S1(config)#banner motd $ only for autorized users $
+S1(config)#exit
+S1#copy running-config startup-config
+S1#clock set  18:19:00 04 April 2021
+```
+### Создание и активация вланов  на S1 и S2.
+S1:
+```
+S1(config)#int vlan 200
+S1(config-if)#ip add
+S1(config-if)#ip address 192.168.1.66 255.255.255.224
+S1(config-if)#no shut
+S1(config-if)#ex
+```
+S2:
+```
+S2(config)#int vlan 1
+S2(config-if)#ip add
+S2(config-if)#ip address 192.168.1.98 255.255.255.240
+S2(config-if)#no shut
+S2(config-if)#ex
+```
